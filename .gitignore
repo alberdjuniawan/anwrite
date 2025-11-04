@@ -1,0 +1,21 @@
+# Virtual Environment
+venv/
+*.env
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Dataset (PENTING!)
+# Kita akan meletakkan data IAM di sini
+data/
+
+# Hasil/model yang dilatih
+models/
+output/
+
+# IDE & OS files
+.idea/
+.vscode/
+.DS_Store
