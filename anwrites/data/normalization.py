@@ -16,7 +16,8 @@ def simplify_strokes(strokes: StrokeList, epsilon: float = 1.0) -> StrokeList:
         if len(points) > 2:
             mask = rdp(points, epsilon=epsilon, return_mask=True)
             simplified_stroke = [point for(point, keep) in zip(stroke, mask) if keep]
-            simplified_stroke.append(simplified_stroke)
+            if simplified_stroke:
+                simplified_strokes.append(simplified_stroke)
         elif len(points) > 0:
             simplified_strokes.append(stroke)
             
@@ -43,15 +44,24 @@ def convert_to_delta_format(strokes: StrokeList) -> np.ndarray:
             delta_y = point['y'] - current_y
             sequence_data.append([delta_x, delta_y, 0])
             current_x, current_y = point['x'], point['y']
-            
-        sequence_data[-1][2] = 1
+        
+        if sequence_data:
+            sequence_data[-1][2] = 1
+
+        if not sequence_data:
+            return np.array([], dtype=np.int32)
 
     return np.array(sequence_data, dtype=np.int32)
 
 def preprocess_sequence(strokes: StrokeList, rdp_epsilon: float = 1.0) -> np.ndarray:
-    log.info(f"Preprocessing... Goresan mentah: {len(strokes)}")
+    log.info(f"Preprocessing... Raw strokes: {len(strokes)}")
     simplified = simplify_strokes(strokes, epsilon=rdp_epsilon)
-    log.info(f"Goresan setelah RDP: {len(simplified)}")
+    log.info(f"strokes after RDP: {len(simplified)}")
     sequence = convert_to_delta_format(simplified)
-    log.info(f"Total titik sekuens: {len(sequence)}")
+
+    if sequence.size == 0:
+        log.warning("Preprocessing resulted in an empty sequence.")
+        return np.empty((0, 3), dtype=np.int32)
+    
+    log.info(f"Total sequence points: {sequence.shape[0]}")
     return sequence
