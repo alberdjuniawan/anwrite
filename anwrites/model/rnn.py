@@ -61,10 +61,10 @@ class HandwritingRNN(nn.Module):
         self.pen_up_layer = nn.Linear(hidden_dim, 1)
     
     def forward(self, x, h_c=None):
+        lstm_out, (h, c) = self.lstm(x, h_c)
         lstm_out = F.relu(self.fc(lstm_out))
         pi, sigma, mu = self.mdn(lstm_out)
         pen_up = torch.sigmoid(self.pen_up_layer(lstm_out))
-
         return pi, sigma, mu, pen_up, (h, c)
     
     def calculate_loss(self, pi, sigma, mu, pen_up, target_sequence):
