@@ -25,7 +25,7 @@ def main():
         logging.error(f"Data folder not found: {DATA_DIR}")
         return
         
-    logging.info("-Starting Test Phase 1.3 (Dataset & DataLoader)-")
+    logging.info("-Starting Test Phase (Dataset & DataLoader)-")
     
     logging.info(f"Loading dataset from: {DATA_DIR}...")
     dataset = OmniglotStrokeDataset(data_dir=DATA_DIR)
